@@ -1,7 +1,6 @@
 require_relative('../db/sql_runner')
 
 class Screening
-
   attr_reader :id
 
   def initialize(options)
@@ -26,11 +25,11 @@ class Screening
     sql = 'SELECT customers.* FROM customers
             INNER JOIN tickets ON tickets.customer_id = customers.id
             WHERE tickets.screening_id = $1'
-    SqlRunner.run(sql, values).map{|customer|Customer.new(customer)}
+    SqlRunner.run(sql, values).map { |customer| Customer.new(customer) }
   end
 
   def booked
-    result = tickets()
+    result = tickets
     result.count
   end
 
@@ -50,23 +49,22 @@ class Screening
             GROUP BY screening_id
             ORDER BY count'
     screening = []
-    screening << SqlRunner.run(sql).map { |screening| screening  }.last['screening_id'].to_i
+    screening << SqlRunner.run(sql).map { |screening| screening }.last['screening_id'].to_i
     sql = 'SELECT * FROM screenings
             INNER JOIN films ON films.id = screenings.film_id
             WHERE screenings.id = $1'
-    p "most popular film is "
-    SqlRunner.run(sql,screening).each {|result|p "#{result['title']} - Showing at: #{result['show_time']}" }
+    p 'most popular film is '
+    SqlRunner.run(sql, screening).each { |result| p "#{result['title']} - Showing at: #{result['show_time']}" }
   end
 
   def self.all
     sql = 'SELECT * FROM screenings
             INNER JOIN films ON films.id = screenings.film_id'
-    SqlRunner.run(sql).each {|result|p "Film: #{result['title']} - Showing at: #{result['show_time']}" }
+    SqlRunner.run(sql).each { |result| p "Film: #{result['title']} - Showing at: #{result['show_time']}" }
   end
 
   def self.delete_all
     sql = 'DELETE FROM screenings'
     SqlRunner.run(sql)
   end
-
 end

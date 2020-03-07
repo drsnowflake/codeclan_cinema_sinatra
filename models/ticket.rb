@@ -2,7 +2,6 @@ require_relative('../db/sql_runner')
 require_relative('customer')
 
 class Ticket
-
   attr_accessor :customer_id, :screening_id
   attr_reader :id
 
@@ -13,8 +12,10 @@ class Ticket
   end
 
   def save
-    # CHECK CAPACITY PRIOR TO TICKET SALE
-    return p "Screening at capacity unable to sell ticket" if check_capacity() == false
+    # CALL check_capacity PRIOR TO TICKET SALE
+    if check_capacity == false
+      return p 'Screening at capacity unable to sell ticket'
+    end
 
     # SELL TICKET IF SPACE IN SCREEN
     values = [@customer_id, @screening_id]
@@ -28,11 +29,28 @@ class Ticket
     Customer.bought_ticket(@customer_id)
   end
 
+  def check_capacity
+    values = [@screening_id]
+    
+    # GETTING TOTAL NUMBER OF TICKETS SOLD FOR PARTICULAR SCREENING
+    sql = 'SELECT * FROM tickets
+            WHERE screening_id = $1'
+    tickets_sold = SqlRunner.run(sql, values).count
+
+    # GETTING CAPACITY FOR SCREENING
+    sql = 'Select screenings.capacity FROM screenings
+            WHERE id = $1'
+    capacity = SqlRunner.run(sql, values).first['capacity'].to_i
+
+    # RETURNS TRUE IF THERE IS SPACE
+    capacity - tickets_sold > 0
+  end
+
   def delete
     values = [@id]
     sql = 'DELETE FROM tickets
             WHERE id = $1'
-    SqlRunner.run(sql,values)
+    SqlRunner.run(sql, values)
   end
 
   def update
@@ -45,25 +63,13 @@ class Ticket
     SqlRunner.run(sql, values)
   end
 
-  def check_capacity
-    values = [@screening_id]
-    sql = 'SELECT * FROM tickets
-            WHERE screening_id = $1'
-    tickets_sold = SqlRunner.run(sql,values).count
-    sql = 'Select screenings.capacity FROM screenings
-            WHERE id = $1'
-    capacity = SqlRunner.run(sql,values).first['capacity'].to_i
-    capacity - tickets_sold > 0 ? true : false
-  end
-
   def self.all
     sql = 'SELECT * FROM tickets'
-    SqlRunner.run(sql).map{ |ticket| Ticket.new(ticket) }
+    SqlRunner.run(sql).map { |ticket| Ticket.new(ticket) }
   end
 
   def self.delete_all
     sql = 'DELETE FROM tickets'
     SqlRunner.run(sql)
   end
-
 end

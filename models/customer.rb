@@ -2,7 +2,6 @@ require_relative('../db/sql_runner')
 require_relative('film')
 
 class Customer
-
   attr_accessor :name, :funds
   attr_reader :id
 
@@ -24,14 +23,14 @@ class Customer
 
   def funds
     sql = 'SELECT customers.funds FROM customers'
-    return SqlRunner.run(sql).first['funds'].to_i
+    SqlRunner.run(sql).first['funds'].to_i
   end
 
   def delete
     values = [@id]
     sql = 'DELETE FROM tickets
             WHERE customer_id = $1'
-    SqlRunner.run(sql,values)
+    SqlRunner.run(sql, values)
     sql = 'DELETE FROM customers
             WHERE id = $1'
     SqlRunner.run(sql, values)
@@ -52,7 +51,7 @@ class Customer
     sql = 'SELECT tickets.* FROM tickets
             INNER JOIN screenings ON tickets.screening_id = screenings.id
             WHERE tickets.customer_id = $1'
-    SqlRunner.run(sql, values).map{|film|Film.new(film)}
+    SqlRunner.run(sql, values).map { |film| Film.new(film) }
   end
 
   def booked
@@ -85,12 +84,11 @@ class Customer
 
   def self.all
     sql = 'SELECT * FROM customers'
-    SqlRunner.run(sql).map{ |customer| Customer.new(customer) }
+    SqlRunner.run(sql).map { |customer| Customer.new(customer) }
   end
 
   def self.delete_all
-    sql = "DELETE FROM customers"
+    sql = 'DELETE FROM customers'
     SqlRunner.run(sql)
   end
-
 end

@@ -3,7 +3,6 @@ require_relative('../db/sql_runner')
 require_relative('customer')
 
 class Film
-
   attr_accessor :title, :price
   attr_reader :id
 
@@ -31,25 +30,26 @@ class Film
             INNER JOIN screenings ON screenings.id = tickets.screening_id
             INNER JOIN films ON films.id = screenings.film_id
             WHERE films.id = $1'
-    results = SqlRunner.run(sql,values).map{|screening| screening['id']}
-    results.each {|result|
+    results = SqlRunner.run(sql, values).map { |screening| screening['id'] }
+    results.each do |result|
       value = []
       value = value << result.to_i
       sql = 'DELETE FROM tickets
               WHERE id = $1'
-      SqlRunner.run(sql,value)}
+      SqlRunner.run(sql, value)
+    end
 
     # deleting screenings
 
     sql = 'DELETE FROM screenings
             WHERE film_id = $1'
-    SqlRunner.run(sql,values)
+    SqlRunner.run(sql, values)
 
     # deleting films
 
     sql = 'DELETE FROM films
             WHERE id = $1'
-    SqlRunner.run(sql,values)
+    SqlRunner.run(sql, values)
   end
 
   def update
@@ -64,12 +64,11 @@ class Film
 
   def self.all
     sql = 'SELECT * FROM films'
-    SqlRunner.run(sql).map{ |film| Film.new(film) }
+    SqlRunner.run(sql).map { |film| Film.new(film) }
   end
 
   def self.delete_all
     sql = 'DELETE FROM films'
     SqlRunner.run(sql)
   end
-
 end
