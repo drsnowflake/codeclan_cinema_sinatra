@@ -1,7 +1,16 @@
 body {
+  display: flex;
   background-color: #7c9ea8;
+  text-align: center;
+  justify-content: center;
 }
 
 h1 {
   color: white;
+  font-size: 5em;
+}
+
+a {
+  color: white;
+  text-decoration: none;
 }
