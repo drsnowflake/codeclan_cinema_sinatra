@@ -1,0 +1,6 @@
+<% for film in @results %>
+  <h1><%= film.title %></h1>
+  <h1>£<%= film.price.to_s.split('').insert(-3, '.').join('') %></h1>
+<% end %>
+
+<h1><a href="/films"><< Back to list</a></h1>

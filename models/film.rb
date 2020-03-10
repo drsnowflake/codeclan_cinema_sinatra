@@ -67,6 +67,14 @@ class Film
     SqlRunner.run(sql).map { |film| Film.new(film) }
   end
 
+  def self.find_one(id_to_find)
+    values = []
+    values << id_to_find
+    sql = 'SELECT * FROM films
+            WHERE id = $1'
+    SqlRunner.run(sql,values).map { |film| Film.new(film) }
+  end
+
   def self.delete_all
     sql = 'DELETE FROM films'
     SqlRunner.run(sql)
