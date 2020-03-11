@@ -14,3 +14,7 @@ a {
   color: #effaf0;
   text-decoration: none;
 }
+
+ul {
+  list-style-type: none;
+}

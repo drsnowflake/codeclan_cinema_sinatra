@@ -1,3 +1,5 @@
+<ul>
 <% for film in @results %>
-  <ul><a href="films/<%= film.id %>"><h1><%= film.title %></h1></a></ul>
+  <li><a href="films/<%= film.id %>"><h1><%= film.title %></h1></a></li>
 <% end %>
+</ul>
